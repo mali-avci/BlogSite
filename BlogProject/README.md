@@ -1,2 +1,0 @@
-# BlogSite
- mali-avci/BlogSite
