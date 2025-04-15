@@ -1,0 +1,90 @@
+﻿@model List<BlogProject.Entity.Post>
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0">
+                <i class="bi bi-journal-text me-2"></i> Post Listesi
+            </h2>
+            <a href="/post/create" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i> Yeni Post Ekle
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 180px;">Görsel</th>
+                                <th>Başlık</th>
+                                <th class="text-center">Durum</th>
+                                <th class="text-end" style="width: 150px;">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="~/img/@item.Image" class="img-thumbnail" style="width: 150px; height: auto;" alt="@item.Title" />
+                                    </td>
+                                    <td class="fw-semibold">
+                                        <a asp-controller="Post" asp-action="Details" asp-route-url="@item.Url" class="text-decoration-none">
+                                            @item.Title
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Pasif</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@item.PostId" class="btn btn-sm btn-outline-primary me-1">
+                                            <i class="bi bi-pencil"></i> Düzenle
+                                        </a>
+                                        <form method="post" asp-controller="Post" asp-action="Delete" asp-route-postId="@item.PostId" onsubmit="return confirm('Silmek istediğinizden emin misiniz?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Sil
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deletePost(postId) {
+        if (confirm('Bu postu silmek istediğinizden emin misiniz?')) {
+            $.ajax({
+                url: '/post/delete', 
+                type: 'POST',
+                data: { postId: postId },
+                success: function (result) {
+                    if (result.success) {
+                        alert('Post başarıyla silindi!');
+                        location.reload(); 
+                    } else {
+                        alert('Silme işlemi sırasında bir hata oluştu: ' + result.message);
+                    }
+                },
+                error: function () {
+                    alert('Silme işlemi sırasında bir hata oluştu.');
+                }
+            });
+        }
+    }
+</script>

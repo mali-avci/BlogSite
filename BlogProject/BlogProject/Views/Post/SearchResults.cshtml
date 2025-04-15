@@ -1,0 +1,517 @@
+﻿@model PostViewModel
+@{
+    var q = ViewData["SearchQuery"] as string;
+}
+
+<style>
+    :root {
+        --primary: #3f51b5;
+        --secondary: #f50057;
+        --light: #f8f9fa;
+        --dark: #343a40;
+        --gray: #f0f2f5;
+        --text: #495057;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--gray);
+        color: var(--text);
+        line-height: 1.6;
+    }
+
+    /* Ana içerik bölümü */
+    .main-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        color: var(--dark);
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+        display: inline-block;
+    }
+
+    /* Post kartları */
+    .post-card {
+        margin-bottom: 30px;
+        display: flex;
+        transition: transform 0.3s ease;
+        border-radius: 8px;
+        background-color: #fff;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .post-image {
+        flex: 0 0 280px;
+        overflow: hidden;
+        border-radius: 8px 0 0 8px;
+    }
+
+        .post-image img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+    .post-card:hover .post-image img {
+        transform: scale(1.05);
+    }
+
+    .post-content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .post-title {
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+        .post-title a {
+            color: var(--dark);
+            font-size: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .post-title a:hover {
+                color: var(--primary);
+            }
+
+    .post-description {
+        color: var(--text);
+        margin-bottom: 15px;
+        font-size: 14px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .post-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: #6c757d;
+    }
+
+    .post-date {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+        .post-date i {
+            margin-right: 5px;
+        }
+
+    /* Etiketler */
+    .post-tags {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        display: inline-block;
+        background-color: rgba(63, 81, 181, 0.1);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 15px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .tag:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+    /* Sayfalama */
+    .divider {
+        height: 1px;
+        background-color: #e9ecef;
+        margin: 25px 0;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 30px 0 0;
+    }
+
+    .page-item {
+        margin: 0 3px;
+    }
+
+    .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #fff;
+        color: var(--text);
+        border-radius: 50%;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .page-item.disabled .page-link {
+        color: #adb5bd;
+        pointer-events: none;
+        background-color: #fff;
+        box-shadow: none;
+    }
+
+    .page-link:hover:not(.disabled .page-link) {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    /* Sidebar Widget'lar */
+    .sidebar-widget {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .widget-title {
+        color: var(--dark);
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+        display: inline-block;
+    }
+
+    /* Etiketler Widget */
+    .tags-widget {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .tags-widget a {
+            display: inline-block;
+            background-color: #f8f9fa;
+            color: var(--text);
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .tags-widget a:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+    /* Yeni Yazılar Widget */
+    .new-post-item {
+        display: flex;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+        .new-post-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+    .new-post-image {
+        width: 80px;
+        height: 60px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+        .new-post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .new-post-info h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+        .new-post-info h4 a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+            .new-post-info h4 a:hover {
+                color: var(--primary);
+            }
+
+    .new-post-date {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* TagsMenu ve NewPosts için özel stiller */
+     
+    .tags-menu h3 {
+        color: var(--dark);
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+        display: inline-block;
+    }
+
+    .tags-menu-list {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .tags-menu-list li {
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+
+        .tags-menu-list a {
+            display: inline-block;
+            background-color: rgba(63, 81, 181, 0.1);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .tags-menu-list a:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+    /* Yeni Yazılar için stiller */
+    .new-posts h3 {
+        color: var(--dark);
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+        display: inline-block;
+    }
+
+    .new-posts-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .new-posts-list li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+            .new-posts-list li:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+    .new-post-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .new-post-thumb {
+        width: 80px;
+        height: 60px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+        .new-post-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .new-post-info h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+        .new-post-info h4 a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+            .new-post-info h4 a:hover {
+                color: var(--primary);
+            }
+
+    .new-post-date {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* Responsive düzenlemeler */
+    @@media (max-width: 992px) {
+        .col-lg-8, .col-lg-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .post-image {
+            flex: 0 0 200px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .post-card {
+            flex-direction: column;
+        }
+
+        .post-image {
+            flex: 0 0 auto;
+            border-radius: 8px 8px 0 0;
+        }
+
+            .post-image img {
+                height: 220px;
+            }
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="main-content">
+            <h2 class="section-title">Arama Sonuçları: "@q"</h2>
+
+            @if (!Model.Posts.Any())
+            {
+                <p class="text-muted">“@q” ile eşleşen bir gönderi bulunamadı.</p>
+            }
+            else
+            {
+                @foreach (var post in Model.Posts)
+                {
+                    <div class="post-card">
+                        <div class="post-image">
+                            <img src="~/img/@post.Image" alt="@post.Title" />
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <span class="post-date">
+                                    <i>📅</i> @post.PublishedOn.ToString("dd MMM yyyy")
+                                </span>
+                            </div>
+                            <h3 class="post-title">
+                                <a href="/blogs/@post.Url">@post.Title</a>
+                            </h3>
+                            <p class="post-description">@post.Description</p>
+                            <div class="post-tags">
+                                @if (post.Tag != null)
+                                {
+                                    <a href="/blogs/tag/@post.Tag.Url" class="tag">
+                                        @post.Tag.Text
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="divider"></div>
+                <nav>
+                    <ul class="pagination">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a href="?q=@q&page=@(Model.CurrentPage - 1)" class="page-link">«</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled"><span class="page-link">«</span></li>
+                        }
+
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a href="?q=@q&page=@i" class="page-link">@i</a>
+                            </li>
+                        }
+
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a href="?q=@q&page=@(Model.CurrentPage + 1)" class="page-link">»</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled"><span class="page-link">»</span></li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="sidebar-widget">
+            <vc:tags-menu></vc:tags-menu>
+        </div>
+        <div class="sidebar-widget">
+            <vc:new-posts></vc:new-posts>
+        </div>
+    </div>
+</div>

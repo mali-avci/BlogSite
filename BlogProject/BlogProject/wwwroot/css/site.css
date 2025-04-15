@@ -1,0 +1,41 @@
+body {
+    background-color: #eff2f6;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.avatar {
+    width: 3rem;
+    height: 3rem;
+}
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 45px;
+    height: 45px;
+    background-color: var(--primary);
+    color: #fff;
+    text-align: center;
+    line-height: 45px;
+    border-radius: 50%;
+    font-size: 24px;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+    .scroll-to-top:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .scroll-to-top.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+

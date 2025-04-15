@@ -1,0 +1,12 @@
+﻿@model List<Tag>
+<div class="tags-menu">
+    <h3>Categories</h3>
+    <ul class="tags-menu-list">
+        @foreach (var tag in Model)
+        {
+            <li>
+                <a href="/blogs/tag/@tag.Url">@tag.Text</a>
+            </li>
+        }
+    </ul>
+</div>

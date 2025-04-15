@@ -1,0 +1,19 @@
+﻿@model BlogProject.Models.ErrorViewModel
+
+<div class="alert alert-danger">
+    <strong>Hata: </strong> @Model.Message
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ExceptionMessage))
+{
+    <div class="alert alert-warning">
+        <strong>Hata Detayı: </strong> @Model.ExceptionMessage
+    </div>
+}
+
+@if (Model.ShowRequestId)
+{
+    <div class="alert alert-info">
+        <strong>İstek ID: </strong> @Model.RequestId
+    </div>
+}

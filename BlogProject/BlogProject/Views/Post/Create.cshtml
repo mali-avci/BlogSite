@@ -1,0 +1,212 @@
+﻿@model PostCreateViewModel
+
+<div class="container-fluid py-5 bg-light">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-dark text-white p-4 d-flex align-items-center">
+                    <i class="fas fa-edit fa-2x me-3"></i>
+                    <h2 class="mb-0 fw-bold">Yeni İçerik Oluştur</h2>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Sol Panel - Form -->
+                        <div class="col-lg-8 p-4 p-lg-5">
+                            <form asp-action="Create" method="post" enctype="multipart/form-data" id="postForm">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <strong>Hata!</strong> Lütfen aşağıdaki hataları düzeltin.
+                                </div>
+
+                                <!-- Başlık -->
+                                <div class="mb-4">
+                                    <label asp-for="Title" class="form-label fw-bold fs-5 text-dark">
+                                        <i class="fas fa-heading me-2 text-primary"></i>Başlık
+                                    </label>
+                                    <input asp-for="Title" class="form-control form-control-lg border border-light rounded-pill px-4"
+                                           placeholder="Dikkat çekici bir başlık yazın"
+                                           autofocus />
+                                    <span asp-validation-for="Title" class="text-danger mt-1 ps-2 d-block"></span>
+                                </div>
+
+                                <!-- Açıklama -->
+                                <div class="mb-4">
+                                    <label asp-for="Description" class="form-label fw-bold fs-5 text-dark">
+                                        <i class="fas fa-quote-left me-2 text-primary"></i>Açıklama
+                                    </label>
+                                    <input asp-for="Description" class="form-control border border-light rounded-pill px-4"
+                                           placeholder="İçeriğinizi kısaca özetleyin" />
+                                    <span asp-validation-for="Description" class="text-danger mt-1 ps-2 d-block"></span>
+                                </div>
+
+                                <!-- URL -->
+                                <div class="mb-4">
+                                    <label asp-for="Url" class="form-label fw-bold fs-5 text-dark">
+                                        <i class="fas fa-link me-2 text-primary"></i>SEO URL
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text border-0 bg-light text-muted">site.com/blog/</span>
+                                        <input asp-for="Url" class="form-control border border-light rounded-end px-4"
+                                               placeholder="seo-dostu-url" />
+                                    </div>
+                                    <small class="text-muted mt-1 ps-2 d-block">Türkçe karakter ve boşluk kullanmayın</small>
+                                    <span asp-validation-for="Url" class="text-danger mt-1 ps-2 d-block"></span>
+                                </div>
+
+                                <!-- İçerik -->
+                                <div class="mb-4">
+                                    <label asp-for="Content" class="form-label fw-bold fs-5 text-dark">
+                                        <i class="fas fa-align-left me-2 text-primary"></i>İçerik
+                                    </label>
+                                    <textarea asp-for="Content" class="form-control border border-light" rows="8"
+                                              placeholder="İçeriğinizi buraya girin..."></textarea>
+                                    <span asp-validation-for="Content" class="text-danger mt-1 ps-2 d-block"></span>
+                                    <div class="d-flex align-items-center mt-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="fas fa-bold"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="fas fa-italic"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="fas fa-link"></i>
+                                        </button>
+                                        <small class="text-muted ms-auto">Basit HTML formatlaması kullanabilirsiniz</small>
+                                    </div>
+                                </div>
+
+                                <!-- Etiketler -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold fs-5 text-dark">
+                                        <i class="fas fa-tags me-2 text-primary"></i>Etiketler
+                                    </label>
+                                    <select asp-for="SelectedTags" asp-items="Model.AvailableTags"
+                                            class="form-select border border-light rounded" multiple="multiple"
+                                            id="tagsSelect" data-placeholder="Etiketleri seçin">
+                                    </select>
+                                    <small class="text-muted mt-1 ps-2 d-block">En az bir etiket seçin (ctrl/cmd tuşu ile çoklu seçim yapabilirsiniz)</small>
+                                    <span asp-validation-for="SelectedTags" class="text-danger mt-1 ps-2 d-block"></span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Sağ Panel - Ön İzleme ve Ayarlar -->
+                        <div class="col-lg-4 bg-light p-4 p-lg-5 border-start">
+                            <div class="sticky-lg-top">
+                                <h4 class="mb-4 fw-bold text-dark">
+                                    <i class="fas fa-cog me-2 text-primary"></i>Yayın Ayarları
+                                </h4>
+
+                                <!-- Görsel Yükle -->
+                                <div class="card mb-4 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-image me-2 text-primary"></i>Kapak Görseli
+                                        </h5>
+                                        <div class="text-center p-3 bg-white rounded mb-3" id="imagePreview">
+                                            <img src="/api/placeholder/300/200" class="img-fluid" alt="Kapak görseli önizleme" id="previewImg">
+                                        </div>
+                                        <div class="input-group">
+                                            <input asp-for="ImageFile" type="file" class="form-control border-0" id="imageUpload"
+                                                   form="postForm" accept="image/*" />
+                                        </div>
+                                        <span asp-validation-for="ImageFile" class="text-danger mt-1 d-block"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Yayın Durumu -->
+                                <div class="card mb-4 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-globe me-2 text-primary"></i>Yayın Durumu
+                                        </h5>
+                                        <div class="form-check form-switch">
+                                            <input asp-for="IsActive" class="form-check-input" role="switch" id="isActiveSwitch" form="postForm" />
+                                            <label asp-for="IsActive" class="form-check-label">
+                                                <span class="badge bg-success ms-2 px-3 py-2" id="statusBadge">Yayında</span>
+                                            </label>
+                                        </div>
+                                        <small id="statusDesc" class="text-muted d-block mt-2">
+                                            Bu içerik yayınlandığında ziyaretçiler tarafından görüntülenebilecek.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                    <!-- Submit Butonu -->
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" form="postForm">
+                                        <i class="fas fa-paper-plane me-2"></i>İçeriği Yayınla
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Kapak görsel önizleme
+    document.getElementById("imageUpload").addEventListener("change", function() {
+        const previewImg = document.getElementById("previewImg");
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Yayın durumu badge'ini güncelle
+    document.getElementById("isActiveSwitch").addEventListener("change", function() {
+        const statusBadge = document.getElementById("statusBadge");
+        const statusDesc = document.getElementById("statusDesc");
+
+        if (this.checked) {
+            statusBadge.innerText = "Yayında";
+            statusBadge.classList.remove("bg-secondary");
+            statusBadge.classList.add("bg-success");
+            statusDesc.innerText = "Bu içerik yayınlandığında ziyaretçiler tarafından görüntülenebilecek.";
+        } else {
+            statusBadge.innerText = "Taslak";
+            statusBadge.classList.remove("bg-success");
+            statusBadge.classList.add("bg-secondary");
+            statusDesc.innerText = "Bu içerik taslak olarak kaydedilecek ve yayınlanmayacak.";
+        }
+    });
+
+    // Form gönderiminde etiket kontrolü
+    document.querySelector("form").addEventListener("submit", function(event) {
+        var selectedTags = document.getElementById("tagsSelect").selectedOptions;
+
+        // Etiket seçilmediyse
+        if (selectedTags.length === 0) {
+            event.preventDefault();  // Formun gönderilmesini engelle
+            alert("Lütfen en az bir etiket seçin.");
+
+            // Etiket alanına odaklan ve scroll
+            document.getElementById("tagsSelect").focus();
+            document.getElementById("tagsSelect").scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Sayfa yüklendiğinde mevcut durum gösterimini ayarla
+    document.addEventListener("DOMContentLoaded", function() {
+        const isActive = document.getElementById("isActiveSwitch");
+        const statusBadge = document.getElementById("statusBadge");
+        const statusDesc = document.getElementById("statusDesc");
+
+        if (!isActive.checked) {
+            statusBadge.innerText = "Taslak";
+            statusBadge.classList.remove("bg-success");
+            statusBadge.classList.add("bg-secondary");
+            statusDesc.innerText = "Bu içerik taslak olarak kaydedilecek ve yayınlanmayacak.";
+        }
+
+    });
+</script>

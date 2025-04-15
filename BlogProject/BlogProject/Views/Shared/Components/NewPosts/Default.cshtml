@@ -1,0 +1,20 @@
+﻿@model List<Post>
+<div class="new-posts">
+    <h3>New Posts</h3>
+    <ul class="new-posts-list">
+        @foreach (var post in Model)
+        {
+            <li>
+                <div class="new-post-item">
+                    <div class="new-post-thumb">
+                        <img src="~/img/@post.Image" alt="@post.Title">
+                    </div>
+                    <div class="new-post-info">
+                        <h4><a href="/blogs/@post.Url">@post.Title</a></h4>
+                        <span class="new-post-date">@post.PublishedOn.ToString("dd MMM yyyy")</span>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BlogApp</title>
+
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-dark: #5a55d2;
+            --secondary: #f50057;
+            --light: #f1f3f6;
+            --dark: #343a40;
+            --gray: #f1f3f6;
+            --text: #495057;
+        }
+
+        body {
+            background-color: var(--gray);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+        }
+
+            .navbar a.navbar-brand,
+            .navbar .nav-link {
+                color: #fff !important;
+                font-weight: 600;
+            }
+
+        .sidebar {
+            width: 240px;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--dark);
+            padding: 25px 15px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+            .sidebar a {
+                display: block;
+                color: #ccc;
+                padding: 12px 15px;
+                border-radius: 4px;
+                text-decoration: none;
+                margin-bottom: 8px;
+            }
+
+                .sidebar a:hover {
+                    background-color: #495057;
+                    color: #fff;
+                }
+
+            .sidebar .user-info {
+                display: flex;
+                align-items: center;
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid #495057;
+            }
+
+                .sidebar .user-info img {
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    margin-right: 10px;
+                    border: 2px solid var(--primary);
+                }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+            margin-top: 56px;
+            min-height: calc(100vh - 56px - 60px);
+            background-color: #fff;
+
+        }
+
+        footer {
+            background-color: #222;
+            color: #aaa;
+            padding: 20px 0;
+            text-align: center;
+            margin-left: 240px;
+        }
+
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary);
+            color: #fff;
+            text-align: center;
+            line-height: 45px;
+            border-radius: 50%;
+            font-size: 24px;
+            z-index: 9999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+            .scroll-to-top:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .scroll-to-top.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+        @@media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+                .sidebar.active {
+                    transform: translateX(0);
+                    z-index: 1050;
+                }
+
+            .main-content,
+            footer {
+                margin-left: 0 !important;
+                width: 100%;
+            }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            width: 240px;
+            background-color: var(--dark);
+            padding: 25px 15px;
+            overflow-y: auto;
+        }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" onclick="document.querySelector('.sidebar').classList.toggle('active')">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand ms-2" href="/">
+                <i class="bi bi-journal-text me-2"></i>BlogApp
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <div class="sidebar-content">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="user-info">
+                    <img src="@($"{User.FindFirst("ProfileImageUrl")?.Value}?v={DateTime.Now.Ticks}")" alt="@User.Identity.Name" />
+
+                    <span>@User.Identity.Name</span>
+                </div>
+                <a href="/post/list"><i class="bi bi-stickies"></i> My Posts</a>
+                <a href="/profile/@User.Identity.Name"><i class="bi bi-person-circle"></i> My Profile</a>
+            }
+            else
+            {
+                <a href="/users/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                <a href="/users/register"><i class="bi bi-person-plus"></i> Register</a>
+            }
+        </div>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <div class="logout-wrapper">
+                <a href="/users/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            </div>
+        }
+    </div>
+
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year BlogApp | Designed with 💜</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <a href="#" class="scroll-to-top" title="Yukarı çık">
+        <i class="bi bi-chevron-up"></i>
+    </a>
+
+    <script>
+        // Scroll to Top functionality
+        window.addEventListener('scroll', function () {
+            const btn = document.querySelector('.scroll-to-top');
+            if (window.scrollY > 300) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        });
+
+        document.querySelector('.scroll-to-top').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
